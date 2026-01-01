@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -6,104 +7,208 @@
 <title>Happy New Year 2026</title>
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif;}
+body{
+    background:#000;
+    overflow:hidden;
+    height:100vh;
+    color:#fff;
 }
-
-body {
-    background: radial-gradient(circle at bottom, #020111, #000000);
-    overflow: hidden;
-    height: 100vh;
-    color: white;
+canvas{
+    position:fixed;
+    top:0;left:0;
+    width:100%;
+    height:100%;
+    z-index:1;
 }
-
-/* Center Card */
-.card {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0,0,0,0.6);
-    padding: 25px;
-    border-radius: 15px;
-    text-align: center;
-    width: 90%;
-    max-width: 380px;
-    z-index: 10;
+.container{
+    position:absolute;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    z-index:5;
+    width:90%;
+    max-width:380px;
+    background:rgba(255,255,255,0.12);
+    backdrop-filter:blur(10px);
+    border-radius:18px;
+    padding:25px;
+    text-align:center;
+    box-shadow:0 0 25px rgba(255,255,255,0.2);
 }
-
-.card h1 {
-    font-size: 32px;
+h1{
+    font-size:30px;
+    margin-bottom:10px;
 }
-
-.card p {
-    font-size: 16px;
-    margin-top: 10px;
+#countdown{
+    font-size:36px;
+    font-weight:bold;
+    margin:10px 0;
+    color:gold;
 }
-
-.name {
-    margin-top: 15px;
-    font-size: 18px;
-    color: gold;
+input{
+    width:100%;
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    margin:10px 0;
+    font-size:16px;
 }
-
-/* Fireworks */
-.firework {
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    background: transparent;
-    border-radius: 50%;
-    animation: explode 1.5s ease-out infinite;
+button{
+    width:100%;
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    background:gold;
+    color:#000;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:8px;
 }
-
-@keyframes explode {
-    0% {
-        transform: scale(0);
-        opacity: 1;
-        box-shadow:
-        0 0 #ff0,
-        0 0 #f0f,
-        0 0 #0ff,
-        0 0 #fff;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 0;
-        box-shadow:
-        80px -80px #ff0,
-        -80px -80px #f0f,
-        80px 80px #0ff,
-        -80px 80px #fff;
-    }
+.message{
+    margin-top:15px;
+    font-size:18px;
+    line-height:1.5;
+}
+.music-btn{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    z-index:10;
+    background:gold;
+    color:#000;
+    border:none;
+    border-radius:50%;
+    width:50px;
+    height:50px;
+    font-size:20px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- 🎵 Background Music -->
-<audio autoplay loop>
+<canvas id="canvas"></canvas>
+
+<audio id="music" loop>
     <source src="music.mp3" type="audio/mpeg">
 </audio>
 
-<!-- Fireworks -->
-<div class="firework" style="top:20%; left:30%;"></div>
-<div class="firework" style="top:40%; left:70%; animation-delay:0.5s;"></div>
-<div class="firework" style="top:60%; left:50%; animation-delay:1s;"></div>
+<button class="music-btn" onclick="toggleMusic()">🎵</button>
 
-<!-- Message Card -->
-<div class="card">
+<div class="container">
     <h1>🎆 Happy New Year 2026 🎆</h1>
-    <p>
-        Naya saal aapke jeevan me  
-        <br>khushiyan, safalta aur sehat laaye ✨
-    </p>
-    <div class="name">— Best Wishes from Aniket</div>
+    <div id="countdown">10</div>
+
+    <input type="text" id="username" placeholder="Apna naam likho ✨">
+    <button onclick="showWish()">Celebrate 🎉</button>
+
+    <div class="message" id="wish"></div>
 </div>
+
+<script>
+/* Countdown */
+let count=10;
+let cd=document.getElementById("countdown");
+let timer=setInterval(()=>{
+    count--;
+    if(count>0){
+        cd.innerText=count;
+    }else{
+        cd.innerText="🎉 Happy New Year! 🎉";
+        clearInterval(timer);
+    }
+},1000);
+
+/* Name Wish */
+function showWish(){
+    let name=document.getElementById("username").value;
+    if(name==="") name="Friend";
+    document.getElementById("wish").innerHTML=
+    `Dear <b>${name}</b>,<br>
+     Naya saal aapke jeevan me<br>
+     khushiyan, safalta aur sehat laaye ✨`;
+}
+
+/* Music toggle */
+let music=document.getElementById("music");
+let playing=false;
+function toggleMusic(){
+    if(!playing){
+        music.play();
+        playing=true;
+    }else{
+        music.pause();
+        playing=false;
+    }
+}
+
+/* Fireworks Canvas */
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+function random(min,max){return Math.random()*(max-min)+min;}
+
+class Firework{
+    constructor(){
+        this.x=random(0,canvas.width);
+        this.y=random(0,canvas.height/2);
+        this.particles=[];
+        for(let i=0;i<40;i++){
+            this.particles.push({
+                x:this.x,
+                y:this.y,
+                vx:random(-3,3),
+                vy:random(-3,3),
+                speed:random(1,4),
+                life:100,
+                color:`hsl(${random(0,360)},100%,60%)`
+            });
+        }
+    }
+    draw(){
+        this.particles.forEach(p=>{
+            ctx.fillStyle=p.color;
+            ctx.fillRect(p.x,p.y,2,2);
+        });
+    }
+    update(){
+        this.particles.forEach(p=>{
+            p.x+=p.vx;
+            p.y+=p.vy;
+            p.life--;
+        });
+    }
+}
+
+let fireworks=[];
+function animate(){
+    ctx.fillStyle="rgba(0,0,0,0.2)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    if(Math.random()<0.05){
+        fireworks.push(new Firework());
+    }
+
+    fireworks.forEach((f,i)=>{
+        f.update();
+        f.draw();
+        if(f.particles[0].life<=0){
+            fireworks.splice(i,1);
+        }
+    });
+
+    requestAnimationFrame(animate);
+}
+animate();
+
+window.onresize=()=>{
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+};
+</script>
 
 </body>
 </html>
